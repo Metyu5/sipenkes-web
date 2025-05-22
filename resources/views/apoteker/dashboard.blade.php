@@ -10,6 +10,8 @@
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
     <style>
         /* Custom scrollbar */
@@ -59,6 +61,23 @@
         .badge-info {
             @apply bg-blue-100 text-blue-800;
         }
+
+        /* Form styling */
+        .form-input {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200;
+        }
+        
+        .form-select {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white transition-all duration-200;
+        }
+        
+        .btn-primary {
+            @apply bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center;
+        }
+        
+        .btn-secondary {
+            @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 transition-all duration-200 flex items-center justify-center;
+        }
     </style>
 </head>
 
@@ -97,6 +116,14 @@
                     <span class="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $resepMasuk }}</span>
                 </a>
             </li>
+            <li>
+                <a href="#" @click.prevent="menu = 'laporan'"
+                    :class="menu === 'laporan' ? 'bg-emerald-700 text-white' : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'"
+                    class="flex items-center p-3 rounded-lg transition-slow font-medium group">
+                    <i class="fas fa-chart-bar mr-3 text-emerald-200 group-hover:text-white transition-slow" :class="menu === 'laporan' ? 'text-white' : ''"></i>
+                    <span>Laporan</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -128,7 +155,8 @@
             <header class="bg-white shadow-sm z-10">
                 <div class="flex justify-between items-center p-4">
                     <div class="flex items-center">
-                        <h2 class="text-xl font-semibold text-gray-800" x-text="menu === 'dashboard' ? 'Dashboard' : 'Resep Masuk'"></h2>
+                        <h2 class="text-xl font-semibold text-gray-800" 
+                            x-text="menu === 'dashboard' ? 'Dashboard' : menu === 'resep' ? 'Resep Masuk' : 'Laporan'"></h2>
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">
@@ -181,6 +209,85 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Laporan Content -->
+                <div x-show="menu === 'laporan'">
+                    <!-- Header Laporan -->
+                    <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl shadow-lg p-6 mb-6 card-hover">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold mb-2">Laporan Farmasi</h1>
+                                <p class="text-emerald-100 opacity-90">Laporan seputaran obat </p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-4 rounded-full">
+                                <i class="fas fa-chart-line text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Container Form Laporan -->
+                    <div x-show="menu === 'laporan'"
+                        class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6">
+                        <h2 class="text-3xl font-semibold text-emerald-700 mb-4 flex items-center gap-3">
+                            <i class="fas fa-file-alt text-emerald-600"></i>
+                            Buat Laporan Farmasi
+                        </h2>
+
+                        <form action="{{ route('laporan.kirim') }}" method="POST" class="space-y-5">
+                            @csrf
+
+                            <!-- Input Judul Laporan -->
+                            <div>
+                                <label for="judul_laporan" class="block text-sm font-medium text-gray-700 mb-1">Judul
+                                    Laporan</label>
+                                <input type="text" id="judul_laporan" name="judul_laporan"
+                                    placeholder="Masukkan judul laporan..." required
+                                    class="form-input w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" />
+                            </div>
+
+                            <!-- Input Tanggal Laporan -->
+                            <div>
+                                <label for="tanggal_laporan"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Tanggal Laporan</label>
+                                <input type="date" id="tanggal_laporan" name="tanggal_laporan" required
+                                    class="form-input w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" />
+                            </div>
+
+                            <!-- Textarea Isi Laporan -->
+                            <div>
+                                <label for="isi_laporan" class="block text-sm font-medium text-gray-700 mb-1">Isi
+                                    Laporan</label>
+                                <textarea id="isi_laporan" name="isi_laporan" rows="6" placeholder="Tuliskan isi laporan secara detail..."
+                                    required
+                                    class="form-input w-full rounded-md border border-gray-300 px-4 py-3 resize-y focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"></textarea>
+                            </div>
+
+                            <!-- Tombol Submit -->
+                            <div class="flex justify-end">
+                                <button type="submit"
+                                    class="btn-primary flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition">
+                                    <i class="fas fa-paper-plane"></i> Kirim Laporan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    
+                </div>
+                @if(session('success'))
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses!',
+                        text: '{{ session("success") }}',
+                        timer: 2500,
+                        showConfirmButton: false,
+                    });
+                </script>
+                @endif
+                
+              
 
                 <!-- Resep Masuk -->
                 <div x-show="menu === 'resep'" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
@@ -331,10 +438,6 @@
                             </div>
                             <div>
                                 <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                        <span class="sr-only">Previous</span>
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
                                     <a href="#" aria-current="page" class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
                                         1
                                     </a>

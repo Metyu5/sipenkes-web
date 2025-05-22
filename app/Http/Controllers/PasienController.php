@@ -9,6 +9,7 @@ class PasienController extends Controller
 {
     public function store(Request $request)
     {
+        
         $validatedData = $request->validate([
             'nama_pasien'       => 'required|string|max:255',
             'jenis_pelayanan'   => 'required|in:BPJS,Umum',
@@ -20,15 +21,20 @@ class PasienController extends Controller
             'status_administrasi' => 'required|in:Diterima,Ditolak',
             'tekanan_darah'     => 'nullable|string|max:255',
             'denyut_nadi'       => 'nullable|integer',
+            'bb'                => 'nullable|numeric|min:0|max:300',
+            'tb'                => 'nullable|numeric|min:0|max:300',
             'keluhan_utama'     => 'nullable|string',
             'riwayat_penyakit'  => 'nullable|string',
             'riwayat_alergi'    => 'nullable|string',
-            'status_pengiriman' => 'required|in:Belum,Sudah',
         ]);
 
         // Nomor antrian akan di-generate otomatis di model
         Administrasi::create($validatedData);
 
-        return response()->json(['message' => 'Data administrasi berhasil disimpan'], 200);
+        return response()->json([
+         'success' => true,
+            'message' => 'Data administrasi berhasil disimpan',
+]);
+
     }
 }

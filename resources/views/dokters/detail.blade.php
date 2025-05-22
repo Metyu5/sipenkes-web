@@ -7,10 +7,10 @@
     <title>Detail Pasien - SIPENKES</title>
     <link rel="icon" type="image/png" href="{{ asset('puskesmas logo.png') }}">
     @vite('resources/css/app.css')
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <style>
         html,
         body {
@@ -32,8 +32,8 @@
                         <i data-lucide="stethoscope" class="w-8 h-8 text-white"></i>
                         <h1 class="text-2xl font-bold text-white">Detail Pasien</h1>
                     </div>
-                    <a href="{{ route('dokters.dokter') }}" 
-                       class="flex items-center space-x-2 text-white hover:text-green-100 transition-colors">
+                    <a href="{{ route('dokters.dokter') }}"
+                        class="flex items-center space-x-2 text-white hover:text-green-100 transition-colors">
                         <i data-lucide="arrow-left-circle" class="w-5 h-5"></i>
                         <span class="font-medium">Kembali ke Dashboard</span>
                     </a>
@@ -89,8 +89,17 @@
                                     <dt class="text-sm text-gray-500">Keluhan Utama</dt>
                                     <dd class="font-medium text-gray-900">{{ $administrasi->keluhan_utama }}</dd>
                                 </div>
+                                <div class="col-span-1">
+                                    <dt class="text-sm text-gray-500">Berat badan (kg)</dt>
+                                    <dd class="font-medium text-gray-900">{{ $administrasi->bb }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="text-sm text-gray-500">Tinggi badan (cm)</dt>
+                                    <dd class="font-medium text-gray-900">{{ $administrasi->tb }}</dd>
+                                </div>
                             </dl>
                         </div>
+
                     </div>
 
                     <!-- Visit Information -->
@@ -171,4 +180,5 @@
         });
     </script>
 </body>
+
 </html>

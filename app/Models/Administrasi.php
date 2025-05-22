@@ -24,10 +24,11 @@ class Administrasi extends Model
         'status_administrasi',
         'tekanan_darah',
         'denyut_nadi',
+        'bb', 
+        'tb', 
         'keluhan_utama',
         'riwayat_penyakit',
         'riwayat_alergi',
-        'status_pengiriman',
     ];
 
     public $timestamps = false;
