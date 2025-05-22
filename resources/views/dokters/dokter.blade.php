@@ -15,6 +15,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <style>
@@ -64,6 +65,11 @@
                         class="menu-item flex items-center space-x-3 p-3 text-white hover:bg-green-700 rounded-lg transition-colors">
                         <i data-lucide="book-open" class="w-5 h-5"></i>
                         <span>Riwayat Pasien</span>
+                    </a>
+                    <a href="#" data-section="report"
+                        class="menu-item flex items-center space-x-3 p-3 text-white hover:bg-green-700 rounded-lg transition-colors">
+                        <i data-lucide="flag" class="w-5 h-5"></i>
+                        <span>Report</span>
                     </a>
                 </nav>
 
@@ -138,7 +144,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                     </div>
                 </div>
 
@@ -406,7 +412,7 @@
                     @endif
                 </div>
 
-
+                {{-- riwayat pasien --}}
                 <div id="riwayat-pasien" class="section-content hidden bg-white rounded-xl shadow-sm overflow-hidden">
                     <!-- Header with Search and Filter -->
                     <div
@@ -614,6 +620,117 @@
                                 class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                                 Selanjutnya
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+
+        @if(session('success2'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success2') }}',
+        timer: 2500,
+        showConfirmButton: false
+    });
+</script>
+@endif
+
+                <div id="report" class="section-content hidden bg-white rounded-xl shadow-sm overflow-hidden">
+                    <!-- Header -->
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-flag text-red-600 mr-2"></i>
+                                Laporan tambahan dari apoteker
+                            </h2>
+                            <p class="text-gray-500 text-sm mt-1">Semua laporan masuk dari pihak apoteker</p>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Isi
+                                        Laporan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($laporans as $index => $laporan)
+                                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                        <!-- Nomor -->
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                            {{ str_pad($laporans->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}
+                                        </td>
+
+                                        <!-- Isi Laporan -->
+                                        <td
+                                            class="px-6 py-4 text-sm text-gray-700 max-w-xs whitespace-normal break-words">
+                                            {{ $laporan->isi_laporan }}
+                                        </td>
+
+                                        <!-- Status -->
+                                        <td class="px-6 py-4">
+                                            @php
+                                                $badge =
+                                                    $laporan->status === 'belum_dibaca'
+                                                        ? 'bg-red-100 text-red-700'
+                                                        : 'bg-green-100 text-green-700';
+                                            @endphp
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold {{ $badge }}">
+                                                {{ ucwords(str_replace('_', ' ', $laporan->status)) }}
+                                            </span>
+                                        </td>
+
+                                        <!-- Tanggal -->
+                                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ \Carbon\Carbon::parse($laporan->created_at)->format('d M Y H:i') }}
+                                        </td>
+
+                                        <!-- Aksi -->
+                                        <td class="px-6 py-4 text-sm">
+                                            @if ($laporan->status === 'belum_dibaca')
+                                                <form action="{{ route('dokter.laporan.ubah_status', $laporan->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 text-xs font-medium rounded transition">
+                                                        Tandai Dibaca
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span
+                                                    class="inline-block px-3 py-1 bg-green-50 text-green-600 text-xs font-medium rounded">
+                                                    ✔ Dibaca
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            Menampilkan {{ $laporans->firstItem() }} - {{ $laporans->lastItem() }} dari
+                            {{ $laporans->total() }} laporan
+                        </div>
+                        <div>
+                            {{ $laporans->links() }}
                         </div>
                     </div>
                 </div>

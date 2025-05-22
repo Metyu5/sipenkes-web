@@ -83,5 +83,6 @@ Route::post('/dokter/register', [DokterController::class, 'registerDokter'])->na
 // 🔹 Tambah Data Pasien
 Route::post('/administrasi/store', [PasienController::class, 'store'])->name('pasien.store');
 Route::post('/laporan/kirim', [LaporanController::class, 'simpanLaporan'])->name('laporan.kirim');
+Route::post('/dokter/laporan/{id}/ubah-status', [DokterController::class, 'ubahStatusLaporan'])->name('dokter.laporan.ubah_status');
 
 

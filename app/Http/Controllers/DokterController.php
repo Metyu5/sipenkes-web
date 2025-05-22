@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use App\Models\Antrian;
 use App\Models\Administrasi;
 use App\Models\ResepDokter;
+use App\Models\Laporan;
+
 
 
 class DokterController extends Controller
@@ -45,6 +47,8 @@ class DokterController extends Controller
     public function index()
 {
     $antrianTerbaru = Antrian::whereDate('created_at', Carbon::today())->get();
+    $laporans = Laporan::orderBy('created_at', 'desc')->paginate(10);
+
     $antrianDiprosesCount = Antrian::where('status', 'Selesai')->count();
     $PasienMasuk = Antrian::whereDate('created_at', Carbon::today())->count();
     $resepSelesai = ResepDokter::count();
@@ -88,6 +92,7 @@ class DokterController extends Controller
         'pasienHariIni',
         'resepSelesai',
         'resepDokter',
+        'laporans',
     ));
 }
 
@@ -103,6 +108,16 @@ class DokterController extends Controller
         // Jika data tidak ditemukan
         return redirect()->route('dokters.dokter')->with('error', 'Administrasi tidak ditemukan.');
     }
+}
+
+
+public function ubahStatusLaporan($id)
+{
+    $laporan = Laporan::findOrFail($id);
+    $laporan->status = 'laporan_dibaca';
+    $laporan->save();
+
+    return redirect()->back()->with('success2', 'Status laporan berhasil diperbarui.');
 }
 
     public function registerDokter(Request $request)
